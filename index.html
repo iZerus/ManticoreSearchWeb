@@ -8,6 +8,18 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="manticoresearch.js"></script>
     <link rel="stylesheet" href="manticoresearch.css">
+
+    <style>
+        .highlight {
+            color: blue;
+            font-weight: bold;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -22,15 +34,10 @@
             titleNotFound: 'Ничего не нашлось...',
             defaultWidth: true,
             timeout: 100,
+            limit: 15,
             handleElement: (element, item, keyword) => {
-                let str = item.name;
-                let start = item.name.indexOf(keyword);
-                if (start > -1) {
-                    str = item.name.substring(0, start);
-                    str += '<b style="color: red">'+keyword+'</b>';
-                    str += item.name.substring(start + keyword.length);
-                }
-                element.innerHTML = `<a href='/product/${item.url}'>${str}</a>`;
+                let text = manticore_highlight(item.name, keyword, 'highlight');
+                element.innerHTML = `<a href='/product/${item.url}'>${text}</a>`;
             },
             handleTitle: (element, title) => {
                 element.innerHTML = `> ${title} <`;

@@ -13,9 +13,10 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $res = [];
 $kw = $_GET['kw'];
+$lim = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 
 
-$stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE MATCH('$kw')");
+$stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE MATCH('$kw') LIMIT $lim");
 $results = $stmt->fetchAll();
 $res['match'] = $results;
 
@@ -26,7 +27,7 @@ $res['keywords'] = [];
 foreach ($results as $value)
     if (substr($value['normalized'], 0, 1) == '=') {
         $key = explode("=", $value['normalized'])[1];
-        $stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE MATCH('$key')");
+        $stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE MATCH('$key') LIMIT $lim");
         $key_results = $stmt->fetchAll();
         $res['keywords'][] = $key_results;
     }
@@ -38,7 +39,7 @@ $res['suggest'] = [];
 if (count($results) > 1) {
     foreach ($results as $value) {
         $key = $value['suggest'];
-        $stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE MATCH('$key')");
+        $stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE MATCH('$key') LIMIT $lim");
         $key_results = $stmt->fetchAll();
         $res['suggest'][] = $key_results;
     }

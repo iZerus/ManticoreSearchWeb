@@ -11,12 +11,13 @@ var __MANTICORESEARCH_SEMAFOR = 0;
  * @param {object} options - параметры
  * @arg {String} options.url - адрес для поисковой машины. Пример: https://example.com/search.php
  * @arg {String} options.inputId - id инпута для поиска
- * @arg {String} options.timeout - таймаут после ввода символа
+ * @arg {Number} options.timeout - таймаут после ввода символа
  * @arg {String} options.defaultWidth - ставить ширину по умолчанию (true/false)
  * @arg {Function} options.handleElement - функция обработки результата поиска
  * @arg {Function} options.handleTitle - функция обработки заголовка поиска
- * @arg {Function} options.titleSuggest - заголовок подсказки
- * @arg {Function} options.titleNotFound - заголовок подсказки
+ * @arg {String} options.titleSuggest - заголовок подсказки
+ * @arg {String} options.titleNotFound - заголовок подсказки
+ * @arg {Number} options.limit - лимит на кол-во выдачи
  */
 function manticore_init(options) {
     if (options == undefined) console.error('options is undefined');
@@ -26,6 +27,7 @@ function manticore_init(options) {
     if (options.defaultWidth == undefined) options.defaultWidth = true;
     if (options.titleSuggest == undefined) options.titleSuggest = 'Возможно, Вы ищите это?';
     if (options.titleNotFound == undefined) options.titleNotFound = 'Ничего не найдено';
+    if (options.limit == undefined) options.limit = 10;
 
     let inp = document.getElementById(options.inputId);
 
@@ -81,7 +83,7 @@ function manticore_init(options) {
             __MANTICORESEARCH_SEMAFOR = 0;
             let kw = this.value;
             if (kw) {
-                fetch(`${options.url}?kw=${kw}`)
+                fetch(`${options.url}?kw=${kw}&limit=${options.limit}`)
                     .then(res => {
                         return res.json()
                     })
@@ -111,4 +113,19 @@ function manticore_init(options) {
     inp.addEventListener('click', function() {
         (search.bind(this))();
     });
+}
+
+
+
+function manticore_highlight(text, keyword, className) {
+    let str = text;
+    let start = text.toLowerCase().indexOf(keyword.toLowerCase());
+    if (start > -1) {
+        str = text.substring(0, start);
+        str += `<span class='${className}'>`;
+        str += text.substring(start, start + keyword.length);
+        str += `</span>`;
+        str += text.substring(start + keyword.length);
+    }
+    return str;
 }
