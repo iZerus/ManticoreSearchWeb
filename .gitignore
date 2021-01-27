@@ -1,0 +1,9 @@
+*.conf
+Data/*
+!Data/.gitkeep
+Index/*
+!Index/.gitkeep
+Log/*
+!Log/.gitkeep
+Run/*
+!Run/.gitkeep

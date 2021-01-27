@@ -1,0 +1,32 @@
+source source {
+  type             = mysql
+  sql_host         = localhost
+  sql_user         = mancticore
+  sql_pass         = 123123
+  sql_db           = mancticore
+  sql_query        = SELECT id, head, body, url from pages
+
+ }
+
+index indx {
+  type   = plain
+  source = source
+  path   = /home/lubuntu/Manticore/TestProject/Index/indx
+  morphology = stem_enru
+  min_infix_len = 2
+  stored_fields = head, body
+  stored_only_fields = url
+}
+
+
+searchd
+{
+    listen = 127.0.0.1:9312
+    listen = 127.0.0.1:9306:mysql
+    listen = 127.0.0.1:9308:http
+    log = /home/lubuntu/Manticore/TestProject/Log/searchd.log
+    query_log = /home/lubuntu/Manticore/TestProject/Log/query.log
+    pid_file = /home/lubuntu/Manticore/TestProject/Run/searchd.pid
+    #data_dir = /home/lubuntu/Manticore/TestProject/Data/
+    query_log_format = sphinxql
+}
