@@ -1,0 +1,21 @@
+.__js-mtcr-search {
+    position: absolute;
+}
+
+.__js-mtcr-search__list {
+    top: 5px;
+    position: relative;
+    background: white;
+    border: 1px solid gray;
+    overflow-y: scroll;
+    max-height: 300px;
+}
+
+.__js-mtcr-search__list-element {
+    padding: 5px;
+}
+
+.__js-mtcr-search__list-element:hover {
+    color: blue;
+    cursor: pointer;
+}
