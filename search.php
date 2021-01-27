@@ -1,28 +1,58 @@
 <?php
+// CONFIG
+
+const _PORT = 9306;
+const INDEX_TABLE = 'iproducts';
+
+// END CONFIG
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-
 // Если вместо 127.0.0.1 написать localhost, то под линуксом PDO может приконнектиться к MySQL
-$pdo = new PDO('mysql:host=127.0.0.1;port=9306');
+$pdo = new PDO('mysql:host=127.0.0.1;port='._PORT);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $res = [];
 $kw = $_GET['kw'];
 
 
-$stmt = $pdo->query("SELECT * FROM iproducts WHERE MATCH('$kw')");
+$stmt = $pdo->query("SELECT * FROM ".INDEX_TABLE." WHERE MATCH('$kw')");
 $results = $stmt->fetchAll();
 $res['match'] = $results;
 
 
-$stmt = $pdo->query("CALL KEYWORDS('*$kw*', 'iproducts')");
+$stmt = $pdo->query("CALL KEYWORDS('*$kw*', '".INDEX_TABLE."')");
 $results = $stmt->fetchAll();
 $res['keywords'] = [];
 foreach ($results as $value)
     if (substr($value['normalized'], 0, 1) == '=') {
         $key = explode("=", $value['normalized'])[1];
-        $stmt = $pdo->query("SELECT * FROM iproducts WHERE MATCH('$key')");
+        $stmt = $pdo->query("SELECT * FROM ".INDEX_TABLE." WHERE MATCH('$key')");
         $key_results = $stmt->fetchAll();
         $res['keywords'][] = $key_results;
     }
@@ -34,7 +64,7 @@ $res['suggest'] = [];
 if (count($results) > 1) {
     foreach ($results as $value) {
         $key = $value['suggest'];
-        $stmt = $pdo->query("SELECT * FROM iproducts WHERE MATCH('$key')");
+        $stmt = $pdo->query("SELECT * FROM ".INDEX_TABLE." WHERE MATCH('$key')");
         $key_results = $stmt->fetchAll();
         $res['suggest'][] = $key_results;
     }
