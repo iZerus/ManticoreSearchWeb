@@ -19,3 +19,9 @@
 .__js-mtcr-search__list-element:hover {
     background: lightcyan;
 }
+
+.__js-mtcr-search__list-element-title {
+    padding: 5px;
+    font-weight: bold;
+    cursor: default;
+}

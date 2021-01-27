@@ -22,8 +22,13 @@
         manticore_init({
             url: '/search.php',
             inputId: 'search',
+            titleSuggest: 'Может быть это?',
+            titleNotFound: 'Ничего не нашлось...',
             handleElement: (element, item) => {
                 element.innerHTML = `<a href='/product/${item.url}'>${item.name}</a>`;
+            },
+            handleTitle: (element, title) => {
+                element.innerHTML = `> ${title} <`;
             }
         });
         // var SEMAFOR = 0;

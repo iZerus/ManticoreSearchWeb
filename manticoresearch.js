@@ -14,6 +14,9 @@ var __MANTICORESEARCH_SEMAFOR = 0;
  * @arg {String} options.timeout - таймаут после ввода символа
  * @arg {String} options.defaultWidth - ставить ширину по умолчанию (true/false)
  * @arg {Function} options.handleElement - функция обработки результата поиска
+ * @arg {Function} options.handleTitle - функция обработки заголовка поиска
+ * @arg {Function} options.titleSuggest - заголовок подсказки
+ * @arg {Function} options.titleNotFound - заголовок подсказки
  */
 function manticore_init(options) {
     if (options == undefined) console.error('options is undefined');
@@ -21,6 +24,8 @@ function manticore_init(options) {
     if (options.inputId == undefined) console.error('options.inputId is undefined');
     if (options.timeout == undefined) options.timeout = 200;
     if (options.defaultWidth == undefined) options.defaultWidth = true;
+    if (options.titleSuggest == undefined) options.titleSuggest = 'Возможно, Вы ищите это?';
+    if (options.titleNotFound == undefined) options.titleNotFound = 'Ничего не найдено';
 
     let inp = document.getElementById(options.inputId);
 
@@ -58,6 +63,16 @@ function manticore_init(options) {
             }
     }
 
+    let addTitle = (title, handleTitle) => {
+        let element = document.createElement('div');
+        element.className = '__js-mtcr-search__list-element-title';
+        if (handleTitle == undefined) {
+            element.innerHTML = title;
+        } else
+            handleTitle(element, title);
+        list.appendChild(element);
+    }
+
     let search = function() {
         if (__MANTICORESEARCH_SEMAFOR++ == 0)
         setTimeout(() => {
@@ -71,18 +86,19 @@ function manticore_init(options) {
                         return res.json()
                     })
                     .then(res => {
+                        block.style.display = 'block';
                         if (res.match.length == undefined) {
-                            block.style.display = 'block';
                             addElements(res.match, options.handleElement);
                         }
                         else if (res.keywords.length == undefined) {
-                            block.style.display = 'block';
                             addElements(res.keywords, options.handleElement);
                         }
                         else if (res.suggest.length == undefined) {
-                            block.style.display = 'block';
+                            addTitle(options.titleSuggest, options.handleTitle);
                             addElements(res.suggest, options.handleElement);
                         }
+                        else
+                            addTitle(options.titleNotFound, options.handleTitle);
                     });
             }
 
