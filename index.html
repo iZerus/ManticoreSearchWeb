@@ -13,10 +13,6 @@
 
     <input id="search" autocomplete="off" style="width: 50%">
 
-    <div id="result">
-
-    </div>
-
     <script>
 
         manticore_init({
@@ -31,50 +27,6 @@
                 element.innerHTML = `> ${title} <`;
             }
         });
-        // var SEMAFOR = 0;
-
-        // $('#search').on('keyup', function() {
-        //     let inp = this;
-        //     if (SEMAFOR++ == 0) 
-        //         setTimeout(() => {
-        //             SEMAFOR = 0;
-        //             let kw = $(inp).val();
-        //             let d = $('#result');
-        //             if (kw) {
-        //                 fetch(`/search.php?kw=${kw}`)
-        //                     .then(res => {
-        //                         return res.json()
-        //                     })
-        //                     .then(res => {
-        //                         console.log(res);
-        //                         d.html('');
-                                
-        //                         function add(d, data, title) {
-        //                             if (title) d.append(`<h3>${title}</h3>`);
-        //                             for (const key in data) {
-        //                                 if (Object.hasOwnProperty.call(data, key)) {
-        //                                     const el = data[key];
-        //                                     d.append(`<p title="${el.id}: ${el.url}">${el.name}</p>`);
-        //                                 }
-        //                             }
-        //                         }
-
-        //                         if (res.match.length == undefined) {
-        //                             add(d, res.match, 'Совпадения');
-        //                         } else if (res.keywords.length == undefined) {
-        //                             add(d, res.keywords);
-        //                         } else {
-        //                             d.append(`<h3>Не нашлось совпадений</h3>`);
-        //                             if (res.suggest.length == undefined) {
-        //                                 add(d, res.suggest, 'Возможно, это?');
-        //                             }
-        //                         }
-        //                     });
-        //             } else {
-        //                 d.html('');
-        //             }
-        //         }, 100);
-        // });
 
     </script>
 </body>
