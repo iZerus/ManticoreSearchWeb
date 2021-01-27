@@ -7,3 +7,4 @@ Manticore/Log/*
 !Manticore/Log/.gitkeep
 Manticore/Run/*
 !Manticore/Run/.gitkeep
+config.ini
