@@ -23,7 +23,7 @@
             url: '/search.php',
             inputId: 'search',
             handleElement: (element, item) => {
-                element.textContent = item.name;
+                element.innerHTML = `<a href='/product/${item.url}'>${item.name}</a>`;
             }
         });
         // var SEMAFOR = 0;
