@@ -40,6 +40,9 @@ function manticore_init(options) {
     list.className = '__js-mtcr-search__list';
     block.appendChild(list);
 
+    document.addEventListener('click', () => {
+        block.style.display = 'none';
+    });
     
     let addElements = (data, handleElement) => {
         for (const key in data)
@@ -55,35 +58,41 @@ function manticore_init(options) {
             }
     }
 
-    inp.addEventListener('keyup', function() {
-
+    let search = function() {
         if (__MANTICORESEARCH_SEMAFOR++ == 0)
-            setTimeout(() => {
-                list.innerHTML = '';
-                block.style.display = 'none';
-                __MANTICORESEARCH_SEMAFOR = 0;
-                let kw = this.value;
-                if (kw) {
-                    fetch(`${options.url}?kw=${kw}`)
-                        .then(res => {
-                            return res.json()
-                        })
-                        .then(res => {
-                            if (res.match.length == undefined) {
-                                block.style.display = 'block';
-                                addElements(res.match, options.handleElement);
-                            }
-                            else if (res.keywords.length == undefined) {
-                                block.style.display = 'block';
-                                addElements(res.keywords, options.handleElement);
-                            }
-                            else if (res.suggest.length == undefined) {
-                                block.style.display = 'block';
-                                addElements(res.suggest, options.handleElement);
-                            }
-                        });
-                }
+        setTimeout(() => {
+            list.innerHTML = '';
+            block.style.display = 'none';
+            __MANTICORESEARCH_SEMAFOR = 0;
+            let kw = this.value;
+            if (kw) {
+                fetch(`${options.url}?kw=${kw}`)
+                    .then(res => {
+                        return res.json()
+                    })
+                    .then(res => {
+                        if (res.match.length == undefined) {
+                            block.style.display = 'block';
+                            addElements(res.match, options.handleElement);
+                        }
+                        else if (res.keywords.length == undefined) {
+                            block.style.display = 'block';
+                            addElements(res.keywords, options.handleElement);
+                        }
+                        else if (res.suggest.length == undefined) {
+                            block.style.display = 'block';
+                            addElements(res.suggest, options.handleElement);
+                        }
+                    });
+            }
 
-            }, options.timeout);
+        }, options.timeout);
+    }
+
+    inp.addEventListener('keyup', function() {
+        (search.bind(this))();
+    });
+    inp.addEventListener('click', function() {
+        (search.bind(this))();
     });
 }

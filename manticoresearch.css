@@ -13,4 +13,9 @@
 
 .__js-mtcr-search__list-element {
     padding: 5px;
+    cursor: pointer;
+}
+
+.__js-mtcr-search__list-element:hover {
+    background: lightcyan;
 }
