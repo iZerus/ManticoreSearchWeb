@@ -20,8 +20,17 @@
             inputId: 'search',
             titleSuggest: 'Может быть это?',
             titleNotFound: 'Ничего не нашлось...',
-            handleElement: (element, item) => {
-                element.innerHTML = `<a href='/product/${item.url}'>${item.name}</a>`;
+            defaultWidth: true,
+            timeout: 100,
+            handleElement: (element, item, keyword) => {
+                let str = item.name;
+                let start = item.name.indexOf(keyword);
+                if (start > -1) {
+                    str = item.name.substring(0, start);
+                    str += '<b style="color: red">'+keyword+'</b>';
+                    str += item.name.substring(start + keyword.length);
+                }
+                element.innerHTML = `<a href='/product/${item.url}'>${str}</a>`;
             },
             handleTitle: (element, title) => {
                 element.innerHTML = `> ${title} <`;

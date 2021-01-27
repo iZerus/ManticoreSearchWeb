@@ -49,7 +49,7 @@ function manticore_init(options) {
         block.style.display = 'none';
     });
     
-    let addElements = (data, handleElement) => {
+    let addElements = (data, handleElement, kw) => {
         for (const key in data)
             if (Object.hasOwnProperty.call(data, key)) {
                 const item = data[key];
@@ -58,7 +58,7 @@ function manticore_init(options) {
                 if (handleElement == undefined) {
                     element.textContent = item.id;
                 } else
-                    handleElement(element, item);
+                    handleElement(element, item, kw);
                 list.appendChild(element);
             }
     }
@@ -88,14 +88,14 @@ function manticore_init(options) {
                     .then(res => {
                         block.style.display = 'block';
                         if (res.match.length == undefined) {
-                            addElements(res.match, options.handleElement);
+                            addElements(res.match, options.handleElement, kw);
                         }
                         else if (res.keywords.length == undefined) {
-                            addElements(res.keywords, options.handleElement);
+                            addElements(res.keywords, options.handleElement, kw);
                         }
                         else if (res.suggest.length == undefined) {
                             addTitle(options.titleSuggest, options.handleTitle);
-                            addElements(res.suggest, options.handleElement);
+                            addElements(res.suggest, options.handleElement, kw);
                         }
                         else
                             addTitle(options.titleNotFound, options.handleTitle);
