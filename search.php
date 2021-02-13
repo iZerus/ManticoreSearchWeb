@@ -33,7 +33,7 @@ foreach ($results as $value)
     }
 
 
-$stmt = $pdo->query("CALL SUGGEST('$kw', 'iproducts')");
+$stmt = $pdo->query("CALL SUGGEST('$kw', '".$config['index_table']."')");
 $results = $stmt->fetchAll();
 $res['suggest'] = [];
 if (count($results) > 1) {
