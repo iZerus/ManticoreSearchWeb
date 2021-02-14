@@ -89,7 +89,7 @@ function manticore_init(options) {
                     })
                     .then(res => {
                         block.style.display = 'block';
-                        if (res.match.length == undefined) {
+                        if (res.match.length) {
                             addElements(res.match, options.handleElement, kw);
                         }
                         // else if (res.keywords.length == undefined) {

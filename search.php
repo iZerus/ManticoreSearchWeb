@@ -12,56 +12,37 @@ $pdo = new PDO('mysql:host=127.0.0.1;port='.$config['port']);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $res = [];
+$res['match'] = [];
 $kw = $_GET['kw'];
 $lim = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 
-$match = "MATCH('$kw')";
 
 
-$stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE $match");
-$results = $stmt->fetchAll();
-$res['match'] = $results;
+function _array_push(&$array, &$items) { foreach ($items as &$value) $array[] = $value; }
+
+function matchQuery($match) {
+    global $pdo, $config, $res, $lim;
+    $stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE $match LIMIT $lim");
+    $results = $stmt->fetchAll();
+    _array_push($res['match'], $results);
+}
 
 
-// $stmt = $pdo->query("CALL KEYWORDS('*$kw*', '".$config['index_table']."')");
-// $results = $stmt->fetchAll();
-// $res['keywords'] = [];
-// foreach ($results as $value)
-//     if (substr($value['normalized'], 0, 1) == '=') {
-//         $key = explode("=", $value['normalized'])[1];
-//         $stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE MATCH('$key') LIMIT $lim");
-//         $key_results = $stmt->fetchAll();
-//         $res['keywords'][] = $key_results;
-//     }
-
-
-// $stmt = $pdo->query("CALL SUGGEST('$kw', '".$config['index_table']."')");
-// $results = $stmt->fetchAll();
-// $res['suggest'] = [];
-// if (count($results) > 1) {
-//     foreach ($results as $value) {
-//         $key = $value['suggest'];
-//         $stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE MATCH('$key') LIMIT $lim");
-//         $key_results = $stmt->fetchAll();
-//         $res['suggest'][] = $key_results;
-//     }
-// }
+matchQuery("MATCH('^$kw')");
+matchQuery("MATCH('$kw')");
+matchQuery("MATCH('*$kw*')");
 
 
 $response = [ 'keywords' => [], 'match' => [], 'suggest' => [] ];
-// function clrDplcts(&$res, &$response, $field) {
-//     $tmp = [];
-//     foreach ($res[$field] as $array)
-//         foreach ($array as $value)
-//             $tmp[$value['id']] = $value;
 
-//     $response[$field] = [];
-//     foreach ($tmp as $key => $value)
-//         $response[$field][$key] = $value;
-// }
-// clrDplcts($res, $response, 'keywords');
-// clrDplcts($res, $response, 'suggest');
-foreach ($res['match'] as $value)
-    $response['match'][$value['id']] = $value;
+
+$id_list = [];
+foreach ($res['match'] as $value) {
+    if (!in_array($value['id'], $id_list)) {
+        $response['match'][] = $value;
+        array_push($id_list, $value['id']);
+    }
+}
+
 
 echo json_encode($response, true);
