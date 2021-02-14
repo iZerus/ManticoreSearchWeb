@@ -15,8 +15,10 @@ $res = [];
 $kw = $_GET['kw'];
 $lim = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 
+$match = "MATCH('$kw')";
 
-$stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE MATCH('$kw') LIMIT $lim");
+
+$stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE $match");
 $results = $stmt->fetchAll();
 $res['match'] = $results;
 
