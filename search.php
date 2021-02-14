@@ -48,7 +48,7 @@ $res['match'] = $results;
 // }
 
 
-// $response = [ 'keywords' => [], 'match' => [], 'suggest' => [] ];
+$response = [ 'keywords' => [], 'match' => [], 'suggest' => [] ];
 // function clrDplcts(&$res, &$response, $field) {
 //     $tmp = [];
 //     foreach ($res[$field] as $array)
