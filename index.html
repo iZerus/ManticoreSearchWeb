@@ -34,7 +34,7 @@
             titleNotFound: 'Ничего не нашлось...',
             defaultWidth: true,
             timeout: 100,
-            limit: 15,
+            limit: 1000,
             handleElement: (element, item, keyword) => {
                 let text = manticore_highlight(item.name, keyword, 'highlight');
                 element.innerHTML = `<a href='/product/${item.url}'>${text}</a>`;

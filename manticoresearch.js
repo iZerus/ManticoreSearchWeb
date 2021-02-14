@@ -92,13 +92,13 @@ function manticore_init(options) {
                         if (res.match.length == undefined) {
                             addElements(res.match, options.handleElement, kw);
                         }
-                        else if (res.keywords.length == undefined) {
-                            addElements(res.keywords, options.handleElement, kw);
-                        }
-                        else if (res.suggest.length == undefined) {
-                            addTitle(options.titleSuggest, options.handleTitle);
-                            addElements(res.suggest, options.handleElement, kw);
-                        }
+                        // else if (res.keywords.length == undefined) {
+                        //     addElements(res.keywords, options.handleElement, kw);
+                        // }
+                        // else if (res.suggest.length == undefined) {
+                        //     addTitle(options.titleSuggest, options.handleTitle);
+                        //     addElements(res.suggest, options.handleElement, kw);
+                        // }
                         else
                             addTitle(options.titleNotFound, options.handleTitle);
                     });

@@ -21,44 +21,44 @@ $results = $stmt->fetchAll();
 $res['match'] = $results;
 
 
-$stmt = $pdo->query("CALL KEYWORDS('*$kw*', '".$config['index_table']."')");
-$results = $stmt->fetchAll();
-$res['keywords'] = [];
-foreach ($results as $value)
-    if (substr($value['normalized'], 0, 1) == '=') {
-        $key = explode("=", $value['normalized'])[1];
-        $stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE MATCH('$key') LIMIT $lim");
-        $key_results = $stmt->fetchAll();
-        $res['keywords'][] = $key_results;
-    }
+// $stmt = $pdo->query("CALL KEYWORDS('*$kw*', '".$config['index_table']."')");
+// $results = $stmt->fetchAll();
+// $res['keywords'] = [];
+// foreach ($results as $value)
+//     if (substr($value['normalized'], 0, 1) == '=') {
+//         $key = explode("=", $value['normalized'])[1];
+//         $stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE MATCH('$key') LIMIT $lim");
+//         $key_results = $stmt->fetchAll();
+//         $res['keywords'][] = $key_results;
+//     }
 
 
-$stmt = $pdo->query("CALL SUGGEST('$kw', '".$config['index_table']."')");
-$results = $stmt->fetchAll();
-$res['suggest'] = [];
-if (count($results) > 1) {
-    foreach ($results as $value) {
-        $key = $value['suggest'];
-        $stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE MATCH('$key') LIMIT $lim");
-        $key_results = $stmt->fetchAll();
-        $res['suggest'][] = $key_results;
-    }
-}
+// $stmt = $pdo->query("CALL SUGGEST('$kw', '".$config['index_table']."')");
+// $results = $stmt->fetchAll();
+// $res['suggest'] = [];
+// if (count($results) > 1) {
+//     foreach ($results as $value) {
+//         $key = $value['suggest'];
+//         $stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE MATCH('$key') LIMIT $lim");
+//         $key_results = $stmt->fetchAll();
+//         $res['suggest'][] = $key_results;
+//     }
+// }
 
 
-$response = [ 'keywords' => [], 'match' => [], 'suggest' => [] ];
-function clrDplcts(&$res, &$response, $field) {
-    $tmp = [];
-    foreach ($res[$field] as $array)
-        foreach ($array as $value)
-            $tmp[$value['id']] = $value;
+// $response = [ 'keywords' => [], 'match' => [], 'suggest' => [] ];
+// function clrDplcts(&$res, &$response, $field) {
+//     $tmp = [];
+//     foreach ($res[$field] as $array)
+//         foreach ($array as $value)
+//             $tmp[$value['id']] = $value;
 
-    $response[$field] = [];
-    foreach ($tmp as $key => $value)
-        $response[$field][$key] = $value;
-}
-clrDplcts($res, $response, 'keywords');
-clrDplcts($res, $response, 'suggest');
+//     $response[$field] = [];
+//     foreach ($tmp as $key => $value)
+//         $response[$field][$key] = $value;
+// }
+// clrDplcts($res, $response, 'keywords');
+// clrDplcts($res, $response, 'suggest');
 foreach ($res['match'] as $value)
     $response['match'][$value['id']] = $value;
 
