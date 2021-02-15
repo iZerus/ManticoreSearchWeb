@@ -36,6 +36,7 @@ $kw = addcslashes($kw, '^|"\'!@$()-/<\\~*%');
 
 matchQuery('^'.$kw.'');
 matchQuery(''.$kw.'');
+matchQuery('*'.$kw.'*');
 
 
 $response = [ 'keywords' => [], 'match' => [], 'suggest' => [] ];
