@@ -32,7 +32,7 @@ function matchQuery($kw) {
     _array_push($res['match'], $results);
 }
 
-$kw = addcslashes($kw, '^|"\'!@$()-/<\\~*%');
+// $kw = addcslashes($kw, '^|"\'!@$()-/<\\~*%');
 
 matchQuery('^'.$kw.'');
 matchQuery(''.$kw.'');
