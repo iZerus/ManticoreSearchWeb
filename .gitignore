@@ -8,3 +8,4 @@ Manticore/Log/*
 Manticore/Run/*
 !Manticore/Run/.gitkeep
 config.ini
+Manticore/*.wfs

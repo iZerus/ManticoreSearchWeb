@@ -16,6 +16,7 @@ index indx {
   min_infix_len = 2
   stored_fields = head, body
   stored_only_fields = url
+  wordforms = /home/lubuntu/Manticore/TestProject/wordforms.wfs
 }
 
 
