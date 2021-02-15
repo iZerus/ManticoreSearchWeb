@@ -18,6 +18,7 @@ var __MANTICORESEARCH_SEMAFOR = 0;
  * @arg {String} options.titleSuggest - заголовок подсказки
  * @arg {String} options.titleNotFound - заголовок подсказки
  * @arg {Number} options.limit - лимит на кол-во выдачи
+ * @arg {Number} options.z_index - css
  */
 function manticore_init(options) {
     if (options == undefined) console.error('options is undefined');
@@ -28,11 +29,13 @@ function manticore_init(options) {
     if (options.titleSuggest == undefined) options.titleSuggest = 'Возможно, Вы ищите это?';
     if (options.titleNotFound == undefined) options.titleNotFound = 'Ничего не найдено';
     if (options.limit == undefined) options.limit = 10;
+    if (options.z_index == undefined) options.z_index = 1;
 
     let inp = document.getElementById(options.inputId);
 
     let block = document.createElement('div');
     block.style.display = 'none';
+    block.style.zIndex = options.z_index;
     block.className = '__js-mtcr-search';
     document.body.appendChild(block);
 
