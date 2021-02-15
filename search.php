@@ -20,17 +20,20 @@ $lim = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 
 function _array_push(&$array, &$items) { foreach ($items as &$value) $array[] = $value; }
 
-function matchQuery($match) {
+function matchQuery($kw) {
     global $pdo, $config, $res, $lim;
-    $stmt = $pdo->query("SELECT * FROM ".$config['index_table']." WHERE $match LIMIT $lim");
+    $stmt = $pdo->prepare("SELECT * FROM ".$config['index_table']." WHERE MATCH(:kw) LIMIT :limit");
+    $stmt->bindParam(":kw", $kw, PDO::PARAM_STR);
+    $stmt->bindParam(":limit", $lim, PDO::PARAM_INT);
+    $stmt->execute();
     $results = $stmt->fetchAll();
     _array_push($res['match'], $results);
 }
 
+$kw = addcslashes($kw, '^|"\'!@$()-/<\\~*%');
 
-matchQuery("MATCH('^$kw')");
-matchQuery("MATCH('$kw')");
-matchQuery("MATCH('*$kw*')");
+matchQuery('^'.$kw.'');
+matchQuery(''.$kw.'');
 
 
 $response = [ 'keywords' => [], 'match' => [], 'suggest' => [] ];
