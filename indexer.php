@@ -19,6 +19,9 @@ if ($token != $_token)
 if (!preg_match("/^([a-zA-Z0-9]+)$/", $index_table))
     die('Invalid indexname');
 
-$result = shell_exec("indexer $index_table --rotate");
+$result = shell_exec("sudo ./indexer.sh $index_table");
 
-echo 'Result: '.$result;
+if (strpos($result, 'successfully sent SIGHUP to searchd') !== false)
+    echo 'Success';
+else
+    echo 'Error';

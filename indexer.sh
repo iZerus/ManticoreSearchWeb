@@ -1,1 +1,1 @@
-echo 200
+indexer $1 --rotate
