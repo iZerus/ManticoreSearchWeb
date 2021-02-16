@@ -27,24 +27,30 @@
 
     <script>
 
-        manticore_init({
-            url:  window.location.pathname+'search.php',
-            index: 'master59',
-            inputId: 'search',
-            titleSuggest: 'Может быть это?',
-            titleNotFound: 'Ничего не нашлось...',
-            defaultWidth: true,
-            timeout: 100,
-            limit: 1000,
-            z_index: 100,
-            handleElement: (element, item, keyword) => {
-                let text = manticore_highlight(item.name, keyword, 'highlight');
-                element.innerHTML = `<a href='/product/${item.url}'>${text}</a>`;
-            },
-            handleTitle: (element, title) => {
-                element.innerHTML = `> ${title} <`;
-            }
-        });
+        const urlParams = new URLSearchParams(window.location.search);
+        const index = urlParams.get('index');
+
+        if (!index) {
+            alert('Укажите GET параметр index=имя_индекса');
+        } else
+            manticore_init({
+                url:  window.location.pathname+'search.php',
+                index: index,
+                inputId: 'search',
+                titleSuggest: 'Может быть это?',
+                titleNotFound: 'Ничего не нашлось...',
+                defaultWidth: true,
+                timeout: 100,
+                limit: 1000,
+                z_index: 100,
+                handleElement: (element, item, keyword) => {
+                    let text = manticore_highlight(item.name, keyword, 'highlight');
+                    element.innerHTML = `<a href='/product/${item.url}'>${text}</a>`;
+                },
+                handleTitle: (element, title) => {
+                    element.innerHTML = `> ${title} <`;
+                }
+            });
 
     </script>
 </body>
