@@ -10,3 +10,7 @@
 ```
 www-data ALL=NOPASSWD: /var/www/html/.../indexer.sh
 ```
+
+Чтобы выполнить индексацию обращаемся к скрипту:
+
+.../indexer.php?index=`имя_индекса`&token=`токен`
