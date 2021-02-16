@@ -19,6 +19,6 @@ if ($token != $_token)
 if (!preg_match("/^([a-zA-Z0-9]+)$/", $index_table))
     die('Invalid indexname');
 
+$result = shell_exec("indexer $index_table --rotate");
 
-
-echo 200;
+echo 'Result: '.$result;
