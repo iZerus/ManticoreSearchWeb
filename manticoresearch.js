@@ -10,6 +10,7 @@ var __MANTICORESEARCH_SEMAFOR = 0;
  * 
  * @param {object} options - параметры
  * @arg {String} options.url - адрес для поисковой машины. Пример: https://example.com/search.php
+ * @arg {String} options.index - index
  * @arg {String} options.inputId - id инпута для поиска
  * @arg {Number} options.timeout - таймаут после ввода символа
  * @arg {String} options.defaultWidth - ставить ширину по умолчанию (true/false)
@@ -23,6 +24,7 @@ var __MANTICORESEARCH_SEMAFOR = 0;
 function manticore_init(options) {
     if (options == undefined) console.error('options is undefined');
     if (options.url == undefined) console.error('options.url is undefined');
+    if (options.index == undefined) console.error('options.index is undefined');
     if (options.inputId == undefined) console.error('options.inputId is undefined');
     if (options.timeout == undefined) options.timeout = 200;
     if (options.defaultWidth == undefined) options.defaultWidth = true;
@@ -86,7 +88,7 @@ function manticore_init(options) {
             __MANTICORESEARCH_SEMAFOR = 0;
             let kw = this.value;
             if (kw) {
-                fetch(`${options.url}?kw=${kw}&limit=${options.limit}`)
+                fetch(`${options.url}?kw=${kw}&index=${options.index}&limit=${options.limit}`)
                     .then(res => {
                         return res.json()
                     })

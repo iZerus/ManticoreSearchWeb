@@ -16,6 +16,7 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $res = [];
 $res['match'] = [];
 $kw = $_GET['kw'];
+$index_table = $_GET['index'];
 $lim = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 
 
@@ -23,8 +24,8 @@ $lim = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 function _array_push(&$array, &$items) { foreach ($items as &$value) $array[] = $value; }
 
 function matchQuery($kw) {
-    global $pdo, $config, $res, $lim;
-    $stmt = $pdo->prepare("SELECT * FROM ".$config['index_table']." WHERE MATCH(:kw) LIMIT :limit");
+    global $pdo, $config, $res, $lim, $index_table;
+    $stmt = $pdo->prepare("SELECT * FROM ".$index_table." WHERE MATCH(:kw) LIMIT :limit");
     $stmt->bindParam(":kw", $kw, PDO::PARAM_STR);
     $stmt->bindParam(":limit", $lim, PDO::PARAM_INT);
     $stmt->execute();
