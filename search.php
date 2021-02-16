@@ -18,6 +18,9 @@ $index_table = $_GET['index'];
 $lim = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 
 
+if (!preg_match("/^([a-zA-Z0-9]+)$/", $index_table))
+    die('Invalid indexname');
+
 
 function _array_push(&$array, &$items) { foreach ($items as &$value) $array[] = $value; }
 
