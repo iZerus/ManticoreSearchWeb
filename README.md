@@ -1,7 +1,7 @@
 # Настройка поисковика ManticoreWebSearch
 Установка Manticore на Ubuntu в этой [статье](https://gist.github.com/iZerus/8f82bb1cc2b14a8b38a1b22e1f130386).
 
-Необходимо **проверить** работу `.htaccess`!
+Необходимо **проверить** работу `.htaccess`! Инфа есть на этой [странице](https://askubuntu.com/questions/422027/mod-rewrite-is-enabled-but-not-working).
 
 Пример в index.html
 
