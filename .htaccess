@@ -1,3 +1,0 @@
-<Files ~ "^.ini">
-  Deny from all
-</Files>

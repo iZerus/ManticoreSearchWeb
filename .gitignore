@@ -1,11 +1,1 @@
-Manticore/*.conf
-Manticore/Data/*
-!Manticore/Data/.gitkeep
-Manticore/Index/*
-!Manticore/Index/.gitkeep
-Manticore/Log/*
-!Manticore/Log/.gitkeep
-Manticore/Run/*
-!Manticore/Run/.gitkeep
 config.ini
-Manticore/*.wfs
