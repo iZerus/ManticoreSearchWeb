@@ -7,10 +7,8 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 
-$config = parse_ini_file('config.ini');
-
 // Если вместо 127.0.0.1 написать localhost, то под линуксом PDO может приконнектиться к MySQL
-$pdo = new PDO('mysql:host=127.0.0.1;port='.$config['port']);
+$pdo = new PDO('mysql:host=127.0.0.1;port=9306');
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $res = [];
@@ -24,7 +22,7 @@ $lim = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 function _array_push(&$array, &$items) { foreach ($items as &$value) $array[] = $value; }
 
 function matchQuery($kw) {
-    global $pdo, $config, $res, $lim, $index_table;
+    global $pdo, $res, $lim, $index_table;
     $stmt = $pdo->prepare("SELECT * FROM ".$index_table." WHERE MATCH(:kw) LIMIT :limit");
     $stmt->bindParam(":kw", $kw, PDO::PARAM_STR);
     $stmt->bindParam(":limit", $lim, PDO::PARAM_INT);
