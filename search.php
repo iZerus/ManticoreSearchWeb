@@ -34,12 +34,44 @@ function matchQuery($kw) {
     _array_push($res['match'], $results);
 }
 
-// $kw = addcslashes($kw, '^|"\'!@$()-/<\\~*%');
 
-matchQuery('^'.$kw.'');
-matchQuery(''.$kw.'');
-matchQuery('*'.$kw.'*');
+function getMatch($kw) {
+    matchQuery('^'.$kw.'');
+    matchQuery(''.$kw.'');
+    matchQuery('*'.$kw.'*');
+}
 
+
+function getSuggests($kw, $max_distance, $limit) {
+    global $pdo, $index_table;
+    $stmt = $pdo->prepare("CALL SUGGEST(:kw, '".$index_table."')");
+    $stmt->bindParam(":kw", $kw, PDO::PARAM_STR);
+    $stmt->execute();
+    $result = $stmt->fetchAll();
+    $res = [];
+    foreach ($result as $value)
+        if (count($res) < $limit)
+            if ($value['distance'] <= $max_distance)
+                $res[] = $value['suggest'];
+    return $res;
+}
+
+// Ищем точное совпадение
+getMatch($kw);
+
+// Делим на слова
+$words = preg_split('/\s+/', $kw);
+if (count($words) > 1) {
+    $sequence = '';
+    foreach ($words as $word) {
+        $sgsts = getSuggests($word, 10, 1);
+        $sequence .= !empty($sgsts) ? $sgsts[0].' ' : '';
+    }
+    getMatch($sequence);
+}
+else // Ищем по прдложенным, если слово одно
+    foreach (getSuggests($words[0], 10, 3) as $sgst)
+        getMatch($sgst);
 
 $response = [ 'keywords' => [], 'match' => [], 'suggest' => [] ];
 
