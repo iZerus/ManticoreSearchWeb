@@ -62,12 +62,41 @@ getMatch($kw);
 // Делим на слова
 $words = preg_split('/\s+/', $kw);
 if (count($words) > 1) {
-    $sequence = '';
-    foreach ($words as $word) {
-        $sgsts = getSuggests($word, 10, 1);
-        $sequence .= !empty($sgsts) ? $sgsts[0].' ' : '';
-    }
-    getMatch($sequence);
+    $sequences = [];
+    $word_table = [];
+    foreach ($words as $word)
+        $word_table[] = getSuggests($word, 10, 3);
+
+    // function getSequences($arr) {
+    //     $result = array();
+    //     $total = count($arr);
+    //     while(true) {
+    //         $row = array();
+    //         foreach ($arr as $key => $value) {
+    //             $row[] = current($value);
+    //         }
+    //         $result[] = implode('-', $row);
+         
+    //         for ($i = $total - 1; $i >= 0; $i--) {
+    //             if (next($arr[$i])) {
+    //                 break;
+    //             }
+    //             elseif ($i == 0) {
+    //                 break 2;
+    //             }
+    //             else {
+    //                 reset($arr[$i]);
+    //             }
+    //         }
+         
+    //     }  
+    //     return $result;
+    // }
+
+    // $sequences = getSequences($word_table);
+    // print_r($sequences);
+    print_r($word_table);
+    exit;
 }
 else // Ищем по прдложенным, если слово одно
     foreach (getSuggests($words[0], 10, 3) as $sgst)
