@@ -56,6 +56,25 @@ function getSuggests($kw, $max_distance, $limit) {
     return $res;
 }
 
+function getSequences($arr) {
+    $result = array();
+    $total = count($arr);
+    while(true) {
+        $row = array();
+        foreach ($arr as $key => $value) $row[] = current($value);
+
+        $result[] = implode(' ', $row);
+        for ($i = $total - 1; $i >= 0; $i--)
+            if (next($arr[$i])) 
+                break;
+            elseif ($i == 0) 
+                break 2;
+            else 
+                reset($arr[$i]);
+    }
+    return $result;
+}
+
 // Ищем точное совпадение
 getMatch($kw);
 
@@ -65,38 +84,10 @@ if (count($words) > 1) {
     $sequences = [];
     $word_table = [];
     foreach ($words as $word)
-        $word_table[] = getSuggests($word, 10, 3);
+        $word_table[] = getSuggests($word, 10, 3); 
 
-    // function getSequences($arr) {
-    //     $result = array();
-    //     $total = count($arr);
-    //     while(true) {
-    //         $row = array();
-    //         foreach ($arr as $key => $value) {
-    //             $row[] = current($value);
-    //         }
-    //         $result[] = implode('-', $row);
-         
-    //         for ($i = $total - 1; $i >= 0; $i--) {
-    //             if (next($arr[$i])) {
-    //                 break;
-    //             }
-    //             elseif ($i == 0) {
-    //                 break 2;
-    //             }
-    //             else {
-    //                 reset($arr[$i]);
-    //             }
-    //         }
-         
-    //     }  
-    //     return $result;
-    // }
-
-    // $sequences = getSequences($word_table);
-    // print_r($sequences);
-    print_r($word_table);
-    exit;
+    foreach (getSequences($word_table) as $seq)
+        getMatch($seq);
 }
 else // Ищем по прдложенным, если слово одно
     foreach (getSuggests($words[0], 10, 3) as $sgst)
