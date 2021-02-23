@@ -48,9 +48,15 @@ else
     </style>
 </head>
 <body>
-    <form method="POST">
+    <button form="editor">Сохранить</button>
+    <button form="indexer">Обновить индекс</button>
+    <hr>
+    <form id="indexer" target="_blank" action="indexer.php">
+        <input type="hidden" name="index" value="<?php echo $file; ?>">
+        <input type="hidden" name="token" value="<?php echo $token; ?>">
+    </form>
+    <form method="POST" id="editor">
         <section>
-            <button>Сохранить</button><hr>
             <input type="hidden" name="index" value="<?php echo $file; ?>">
             <input type="hidden" name="token" value="<?php echo $token; ?>">
         </section>
