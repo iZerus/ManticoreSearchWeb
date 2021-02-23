@@ -43,6 +43,7 @@ else
         textarea {
             width: 100%;
             height: 80vh;
+            font-size: 20px;
         }
     </style>
 </head>
