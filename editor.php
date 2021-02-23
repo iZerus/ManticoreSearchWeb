@@ -6,18 +6,56 @@ error_reporting(E_ALL);
 
 $config = parse_ini_file('config.ini');
 
-if (isset($_GET['wordforms'], $_GET['token'])) {
-    $file = $_GET['wordforms'];
-    $token = $_GET['token'];
-    if (isset($config[$file]) && $token == $config[$file])
+if (isset($_POST['index'], $_POST['token'], $_POST['data'])) {
+    $file = $_POST['index'];
+    $token = $_POST['token'];
+    if (isset($config[$file]) && $token == $config[$file] && file_exists(__DIR__.'/wordforms/'.$file.'.wfs'))
     {
+        file_put_contents(__DIR__.'/wordforms/'.$file.'.wfs', $_POST['data']);
         $data = file_get_contents(__DIR__.'/wordforms/'.$file.'.wfs');
-        echo($data);
     }
     else
-        die('Invalid wordforms or token');
+        die('Invalid index or token');
+}
+else if (isset($_GET['index'], $_GET['token'])) {
+    $file = $_GET['index'];
+    $token = $_GET['token'];
+    if (isset($config[$file]) && $token == $config[$file] && file_exists(__DIR__.'/wordforms/'.$file.'.wfs'))
+    {
+        $data = file_get_contents(__DIR__.'/wordforms/'.$file.'.wfs');
+    }
+    else
+        die('Invalid index or token');
 }
 else
-    die('Error: wordforms or token is undefined');
+    die('Error: index or token is undefined');
 
 ?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Словарь - <?php echo $file; ?></title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <style>
+        textarea {
+            width: 100%;
+            height: 80vh;
+        }
+    </style>
+</head>
+<body>
+    <form method="POST">
+        <section>
+            <button>Сохранить</button><hr>
+            <input type="hidden" name="index" value="<?php echo $file; ?>">
+            <input type="hidden" name="token" value="<?php echo $token; ?>">
+        </section>
+        <section>
+            <textarea name="data"><?php echo $data; ?></textarea>
+        </section>
+    </form>
+</body>
+</html>
