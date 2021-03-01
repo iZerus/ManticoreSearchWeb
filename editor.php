@@ -17,9 +17,9 @@ if (isset($_POST['index'], $_POST['token'], $_POST['data'])) {
     else
         die('Invalid index or token');
 }
-else if (isset($_GET['index'], $_GET['token'])) {
-    $file = $_GET['index'];
-    $token = $_GET['token'];
+else if (isset($_POST['index'], $_POST['token'])) {
+    $file = $_POST['index'];
+    $token = $_POST['token'];
     if (isset($config[$file]) && $token == $config[$file] && file_exists(__DIR__.'/wordforms/'.$file.'.wfs'))
     {
         $data = file_get_contents(__DIR__.'/wordforms/'.$file.'.wfs');
@@ -51,7 +51,7 @@ else
     <button form="editor">Сохранить</button>
     <button form="indexer">Обновить индекс</button>
     <hr>
-    <form id="indexer" target="_blank" action="indexer.php">
+    <form method="POST" id="indexer" target="_blank" action="indexer.php">
         <input type="hidden" name="index" value="<?php echo $file; ?>">
         <input type="hidden" name="token" value="<?php echo $token; ?>">
     </form>
