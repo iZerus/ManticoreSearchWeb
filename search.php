@@ -88,6 +88,7 @@ function getSequences($arr) {
     return $result;
 }
 
+$_limit = 100;
 // Ищем точное совпадение
 getMatch($kw);
 
@@ -97,13 +98,13 @@ if (count($words) > 1) {
     $sequences = [];
     $word_table = [];
     foreach ($words as $word)
-        $word_table[] = getSuggests($word, 10, 20); 
+        $word_table[] = getSuggests($word, 10, $_limit); 
 
     foreach (getSequences($word_table) as $seq)
         getMatch($seq);
 }
 else // Ищем по прдложенным, если слово одно
-    foreach (getSuggests($words[0], 10, 20) as $sgst)
+    foreach (getSuggests($words[0], 10, $_limit) as $sgst)
         getMatch($sgst);
 
 $response = [ 'keywords' => [], 'match' => [], 'suggest' => [] ];
