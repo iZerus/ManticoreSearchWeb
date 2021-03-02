@@ -51,17 +51,22 @@ function getSuggests($kw, $max_distance, $limit) {
     $res = [];
     foreach ($result as $value)
         if (count($res) < $limit)
-            if ($value['distance'] <= $max_distance)
-                $res[] = $value['suggest'];
+            if ($value['distance'] <= $max_distance) {
+                $stmt = $pdo->prepare("CALL KEYWORDS(:sgst, '".$index_table."')");
+                $stmt->bindParam(":sgst", $value['suggest'], PDO::PARAM_STR);
+                $stmt->execute();
+                $call_kw = $stmt->fetchAll();
+                $res[] = $call_kw[0]['normalized'];
+            }
     
     // Применим CALL KEYWORDS
-    foreach ($res as &$sgst) {
-        $stmt = $pdo->prepare("CALL KEYWORDS(:sgst, '".$index_table."')");
-        $stmt->bindParam(":sgst", $sgst, PDO::PARAM_STR);
-        $stmt->execute();
-        $result = $stmt->fetchAll();
-        $sgst = $result[0]['normalized'];
-    }
+    // foreach ($res as &$sgst) {
+    //     $stmt = $pdo->prepare("CALL KEYWORDS(:sgst, '".$index_table."')");
+    //     $stmt->bindParam(":sgst", $sgst, PDO::PARAM_STR);
+    //     $stmt->execute();
+    //     $result = $stmt->fetchAll();
+    //     $sgst = $result[0]['normalized'];
+    // }
     return $res;
 }
 
