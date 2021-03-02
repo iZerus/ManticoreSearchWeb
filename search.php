@@ -57,7 +57,13 @@ function getSuggests($kw, $max_distance, $limit) {
                 $stmt->bindParam(":sgst", $value['suggest'], PDO::PARAM_STR);
                 $stmt->execute();
                 $result_kw = $stmt->fetchAll();
-                $res[] = $result_kw[0]['normalized'];
+                // $res[] = $result_kw[0]['normalized'];
+
+                $stmt = $pdo->prepare("CALL KEYWORDS('*".$result_kw[0]['normalized']."*', '".$index_table."')");
+                $stmt->execute();
+                $result_kw2 = $stmt->fetchAll();
+                foreach ($result_kw2 as $kw2) 
+                    if (count($res) < $limit) $res[] = $kw2['normalized'];
             }
     
     return $res;
@@ -91,13 +97,13 @@ if (count($words) > 1) {
     $sequences = [];
     $word_table = [];
     foreach ($words as $word)
-        $word_table[] = getSuggests($word, 10, 10); 
+        $word_table[] = getSuggests($word, 10, 20); 
 
     foreach (getSequences($word_table) as $seq)
         getMatch($seq);
 }
 else // Ищем по прдложенным, если слово одно
-    foreach (getSuggests($words[0], 10, 10) as $sgst)
+    foreach (getSuggests($words[0], 10, 20) as $sgst)
         getMatch($sgst);
 
 $response = [ 'keywords' => [], 'match' => [], 'suggest' => [] ];
