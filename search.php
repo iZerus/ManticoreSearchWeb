@@ -15,7 +15,8 @@ $res = [];
 $res['match'] = [];
 $kw = $_GET['kw'];
 $index_table = $_GET['index'];
-$lim = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+$_limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 100;
+$_distance = isset($_GET['distance']) ? (int)$_GET['distance'] : 10;
 
 
 if (!preg_match("/^([a-zA-Z0-9]+)$/", $index_table))
@@ -26,9 +27,8 @@ function _array_push(&$array, &$items) { foreach ($items as &$value) $array[] = 
 
 function matchQuery($kw) {
     global $pdo, $res, $lim, $index_table;
-    $stmt = $pdo->prepare("SELECT * FROM ".$index_table." WHERE MATCH(:kw) LIMIT :limit");
+    $stmt = $pdo->prepare("SELECT * FROM ".$index_table." WHERE MATCH(:kw) LIMIT 1000");
     $stmt->bindParam(":kw", $kw, PDO::PARAM_STR);
-    $stmt->bindParam(":limit", $lim, PDO::PARAM_INT);
     $stmt->execute();
     $results = $stmt->fetchAll();
     _array_push($res['match'], $results);
@@ -102,9 +102,6 @@ function getSequences($arr) {
     }
     return $result;
 }
-
-$_limit = 100;
-$_distance = 10;
 
 // Ищем точное совпадение
 getMatch($kw);
