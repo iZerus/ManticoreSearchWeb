@@ -24,20 +24,15 @@ if (!preg_match("/^([a-zA-Z0-9]+)$/", $index_table))
     die('Invalid indexname');
 
 
-function _array_push(&$array, &$items, $limit) { 
-    foreach ($items as &$value) 
-        if (count($array) < $limit) $array[] = $value;
-}
+function _array_push(&$array, &$items) { foreach ($items as &$value) $array[] = $value; }
 
 function matchQuery($kw) {
-    global $pdo, $res, $_limit, $index_table;
-    if (count($res['match']) < $_limit) {
-        $stmt = $pdo->prepare("SELECT * FROM ".$index_table." WHERE MATCH(:kw) LIMIT 1000");
-        $stmt->bindParam(":kw", $kw, PDO::PARAM_STR);
-        $stmt->execute();
-        $results = $stmt->fetchAll();
-        _array_push($res['match'], $results, $_limit);
-    }
+    global $pdo, $res, $lim, $index_table;
+    $stmt = $pdo->prepare("SELECT * FROM ".$index_table." WHERE MATCH(:kw) LIMIT 1000");
+    $stmt->bindParam(":kw", $kw, PDO::PARAM_STR);
+    $stmt->execute();
+    $results = $stmt->fetchAll();
+    _array_push($res['match'], $results);
 }
 
 
@@ -145,5 +140,6 @@ foreach ($res['match'] as $value) {
     }
 }
 
+$response['match'] = array_slice($response['match'], 0, $_limit);
 
 echo json_encode($response, true);
