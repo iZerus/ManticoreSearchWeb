@@ -45,7 +45,7 @@ function getMatch($kw) {
     if (count($words) > 1) {
         $query = '';
         foreach ($words as $word)
-            if (mb_strlen($word, 'utf-8') > 2) $query .= '*'.$word.'*'.' ';
+            if (mb_strlen($word) > 2) $query .= '*'.$word.'*'.' ';
             else $query .= $word.'*'.' ';
 
         $query = substr($query, 0, -1);
