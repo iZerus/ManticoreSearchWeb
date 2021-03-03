@@ -57,7 +57,6 @@ function getSuggests($kw, $max_distance, $limit) {
                 $stmt->bindParam(":sgst", $value['suggest'], PDO::PARAM_STR);
                 $stmt->execute();
                 $result_kw = $stmt->fetchAll();
-                // $res[] = $result_kw[0]['normalized'];
 
                 $stmt = $pdo->prepare("CALL KEYWORDS('*".$result_kw[0]['normalized']."*', '".$index_table."')");
                 $stmt->execute();
@@ -89,6 +88,8 @@ function getSequences($arr) {
 }
 
 $_limit = 100;
+$_distance = 10;
+
 // Ищем точное совпадение
 getMatch($kw);
 
@@ -98,13 +99,18 @@ if (count($words) > 1) {
     $sequences = [];
     $word_table = [];
     foreach ($words as $word)
-        $word_table[] = getSuggests($word, 10, $_limit); 
+        $word_table[] = getSuggests($word, $_distance, $_limit); 
 
-    foreach (getSequences($word_table) as $seq)
+    $sequences = getSequences($word_table);
+    // print_r($word_table);
+    // print_r([]);
+    // print_r($sequences);
+
+    foreach ($sequences as $seq)
         getMatch($seq);
 }
 else // Ищем по прдложенным, если слово одно
-    foreach (getSuggests($words[0], 10, $_limit) as $sgst)
+    foreach (getSuggests($words[0], $_distance, $_limit) as $sgst)
         getMatch($sgst);
 
 $response = [ 'keywords' => [], 'match' => [], 'suggest' => [] ];
