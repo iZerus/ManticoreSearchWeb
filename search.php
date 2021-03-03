@@ -44,8 +44,10 @@ function getMatch($kw) {
     $words = preg_split('/\s+/', $kw);
     if (count($words) > 1) {
         $query = '';
-        foreach ($words as $word) 
-            $query .= '*'.$word.'* ';
+        foreach ($words as $word)
+            if (mb_strlen($word) > 2) $query .= '*'.$word.'*'.' ';
+            else $query .= $word.'*'.' ';
+
         $query = substr($query, 0, -1);
         matchQuery($query);
     }
@@ -118,6 +120,9 @@ if (count($words) > 1) {
     
     
     $sequences = getSequences($word_table);
+    // print_r($word_table);  //TODO REMOVE
+    // print_r($sequences);  //TODO REMOVE
+    // exit;
 
     foreach ($sequences as $seq)
         getMatch($seq);
