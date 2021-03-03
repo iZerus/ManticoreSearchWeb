@@ -15,7 +15,8 @@ $res = [];
 $res['match'] = [];
 $kw = $_GET['kw'];
 $index_table = $_GET['index'];
-$_limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 100;
+$_limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 1000;
+$_suggests = isset($_GET['suggests']) ? (int)$_GET['suggests'] : 100;
 $_distance = isset($_GET['distance']) ? (int)$_GET['distance'] : 10;
 
 
@@ -23,15 +24,20 @@ if (!preg_match("/^([a-zA-Z0-9]+)$/", $index_table))
     die('Invalid indexname');
 
 
-function _array_push(&$array, &$items) { foreach ($items as &$value) $array[] = $value; }
+function _array_push(&$array, &$items, $limit) { 
+    foreach ($items as &$value) 
+        if (count($array) < $limit) $array[] = $value;
+}
 
 function matchQuery($kw) {
-    global $pdo, $res, $lim, $index_table;
-    $stmt = $pdo->prepare("SELECT * FROM ".$index_table." WHERE MATCH(:kw) LIMIT 1000");
-    $stmt->bindParam(":kw", $kw, PDO::PARAM_STR);
-    $stmt->execute();
-    $results = $stmt->fetchAll();
-    _array_push($res['match'], $results);
+    global $pdo, $res, $_limit, $index_table;
+    if (count($res['match']) < $_limit) {
+        $stmt = $pdo->prepare("SELECT * FROM ".$index_table." WHERE MATCH(:kw) LIMIT 1000");
+        $stmt->bindParam(":kw", $kw, PDO::PARAM_STR);
+        $stmt->execute();
+        $results = $stmt->fetchAll();
+        _array_push($res['match'], $results, $_limit);
+    }
 }
 
 
@@ -112,7 +118,7 @@ if (count($words) > 1) {
     $sequences = [];
     $word_table = [];
     foreach ($words as $word)
-        $word_table[] = getSuggests($word, $_distance, $_limit); 
+        $word_table[] = getSuggests($word, $_distance, $_suggests); 
 
     
     
@@ -125,7 +131,7 @@ if (count($words) > 1) {
         getMatch($seq);
 }
 else // Ищем по прдложенным, если слово одно
-    foreach (getSuggests($words[0], $_distance, $_limit) as $sgst)
+    foreach (getSuggests($words[0], $_distance, $_suggests) as $sgst)
         getMatch($sgst);
 
 $response = [ 'keywords' => [], 'match' => [], 'suggest' => [] ];
