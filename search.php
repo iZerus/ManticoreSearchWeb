@@ -39,6 +39,28 @@ function getMatch($kw) {
     matchQuery('^'.$kw.'');
     matchQuery(''.$kw.'');
     matchQuery('*'.$kw.'*');
+
+    // Делим на слова
+    $words = preg_split('/\s+/', $kw);
+    if (count($words) > 1) {
+        $query = '';
+        foreach ($words as $word) 
+            $query .= '*'.$word.'* ';
+        $query = substr($query, 0, -1);
+        matchQuery($query);
+    }
+}
+
+
+function callKeywords(&$res, $sgst, $limit) {
+    global $pdo, $index_table;
+    $stmt = $pdo->prepare("CALL KEYWORDS(:sgst, '".$index_table."')");
+    $stmt->bindParam(":sgst", $sgst, PDO::PARAM_STR);
+    $stmt->execute();
+    $result_kw = $stmt->fetchAll();
+    foreach ($result_kw as $kw) 
+        if (count($res) < $limit && !in_array($kw['normalized'], $res)) 
+            $res[] = $kw['normalized'];
 }
 
 
@@ -49,21 +71,13 @@ function getSuggests($kw, $max_distance, $limit) {
     $stmt->execute();
     $result = $stmt->fetchAll();
     $res = [];
+    $res[] = $kw;
+    callKeywords($res, $kw, $limit);
+
     foreach ($result as $value)
         if (count($res) < $limit)
-            if ($value['distance'] <= $max_distance) {
-                $res[] = $value['suggest'];
-                $stmt = $pdo->prepare("CALL KEYWORDS(:sgst, '".$index_table."')");
-                $stmt->bindParam(":sgst", $value['suggest'], PDO::PARAM_STR);
-                $stmt->execute();
-                $result_kw = $stmt->fetchAll();
-
-                $stmt = $pdo->prepare("CALL KEYWORDS('*".$result_kw[0]['normalized']."*', '".$index_table."')");
-                $stmt->execute();
-                $result_kw2 = $stmt->fetchAll();
-                foreach ($result_kw2 as $kw2) 
-                    if (count($res) < $limit) $res[] = $kw2['normalized'];
-            }
+            if ($value['distance'] <= $max_distance)
+                callKeywords($res, $value['suggest'], $limit);
     
     return $res;
 }
@@ -101,10 +115,9 @@ if (count($words) > 1) {
     foreach ($words as $word)
         $word_table[] = getSuggests($word, $_distance, $_limit); 
 
+    
+    
     $sequences = getSequences($word_table);
-    // print_r($word_table);
-    // print_r([]);
-    // print_r($sequences);
 
     foreach ($sequences as $seq)
         getMatch($seq);
