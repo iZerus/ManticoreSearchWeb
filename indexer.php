@@ -7,9 +7,9 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 $config = parse_ini_file('config.ini');
-if (isset($_POST['index'], $_POST['token'])) {
-    $token = $_POST['token'];
-    $index_table = $_POST['index'];
+if (isset($_GET['index'], $_GET['token'])) {
+    $token = $_GET['token'];
+    $index_table = $_GET['index'];
     if (!isset($config[$index_table]) || $token != $config[$index_table])
         die('Invalid index or token');
 } else
