@@ -1,4 +1,5 @@
 var __MANTICORESEARCH_SEMAFOR = 0;
+var __MANTICORESEARCH_SEMAFOR_AJAX = 0;
 
 /**
  * Инициализация поиска manticore
@@ -79,37 +80,39 @@ function manticore_init(options) {
 
 	let search = function() {
         if (__MANTICORESEARCH_SEMAFOR++ == 0)
-        setTimeout(() => {
-            list.innerHTML = '';
-            block.style.display = 'none';
-            __MANTICORESEARCH_SEMAFOR = 0;
-            let kw = this.value;
-			
-			if (kw) {
-				function seachIndex(i, indexList, finded) {
-					fetch(`${options.url}?kw=${kw}&index=${indexList[i].index}`)
-						.then(res => {
-							return res.json()
-						})
-						.then(res => {
-							if (res.match.length) {
-								finded = true;
-								addTitle(indexList[i].title, options.handleTitle, indexList[i].index);
-								addElements(res.match, options.handleElement, kw, indexList[i].index);
-							}
-							if (++i < indexList.length)
-								seachIndex(i, indexList, finded);
-							else {
-								block.style.display = 'block';
-								if (!finded)
-									addTitle(options.titleNotFound, options.handleTitle, '');
-							}
-						})
+			setTimeout(() => {
+				list.innerHTML = '';
+				block.style.display = 'none';
+				__MANTICORESEARCH_SEMAFOR = 0;
+				let kw = this.value;
+				
+				if (kw) {
+					function seachIndex(i, indexList, finded) {
+						fetch(`${options.url}?kw=${kw}&index=${indexList[i].index}`)
+							.then(res => {
+								return res.json()
+							})
+							.then(res => {
+								if (res.match.length) {
+									finded = true;
+									addTitle(indexList[i].title, options.handleTitle, indexList[i].index);
+									addElements(res.match, options.handleElement, kw, indexList[i].index);
+								}
+								if (++i < indexList.length)
+									seachIndex(i, indexList, finded);
+								else {
+									__MANTICORESEARCH_SEMAFOR = 0;
+									block.style.display = 'block';
+									if (!finded)
+										addTitle(options.titleNotFound, options.handleTitle, '');
+								}
+							})
+					}
+					if (__MANTICORESEARCH_SEMAFOR++ == 0)
+						seachIndex(0, options.indexes, false);
 				}
-				seachIndex(0, options.indexes, false);
-			}
 
-        }, options.timeout);
+			}, options.timeout);
     }
 
 	inp.addEventListener('keyup', function() {
