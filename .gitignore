@@ -2,3 +2,6 @@ config.ini
 wordforms/*
 !wordforms/.gitkeep
 !wordforms/.htaccess
+settings/*
+!settings/.gitkeep
+!settings/.htaccess

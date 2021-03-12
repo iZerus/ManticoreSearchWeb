@@ -15,9 +15,17 @@ $res = [];
 $res['match'] = [];
 $kw = $_GET['kw'];
 $index_table = $_GET['index'];
-$_limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 1000;
-$_suggests = isset($_GET['suggests']) ? (int)$_GET['suggests'] : 100;
-$_distance = isset($_GET['distance']) ? (int)$_GET['distance'] : 10;
+
+if (file_exists("settings/$index_table.json")) {
+    $settings = json_decode(file_get_contents("settings/$index_table.json"), true);
+    $_limit = isset($settings['limit']) ? $settings['limit'] : 1000;
+    $_suggests = isset($settings['suggests']) ? $settings['suggests'] : 100;
+    $_distance = isset($settings['distance']) ? $settings['distance'] : 10;
+} else {
+    $_limit = 1000;
+    $_suggests = 100;
+    $_distance = 10;
+}
 
 
 if (!preg_match("/^([a-zA-Z0-9]+)$/", $index_table))
