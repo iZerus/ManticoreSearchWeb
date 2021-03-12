@@ -101,14 +101,14 @@ function manticore_init(options) {
 								if (++i < indexList.length)
 									seachIndex(i, indexList, finded);
 								else {
-									__MANTICORESEARCH_SEMAFOR = 0;
+									__MANTICORESEARCH_SEMAFOR_AJAX = 0;
 									block.style.display = 'block';
 									if (!finded)
 										addTitle(options.titleNotFound, options.handleTitle, '');
 								}
 							})
 					}
-					if (__MANTICORESEARCH_SEMAFOR++ == 0)
+					if (__MANTICORESEARCH_SEMAFOR_AJAX++ == 0)
 						seachIndex(0, options.indexes, false);
 				}
 
