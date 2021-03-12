@@ -18,9 +18,6 @@ var __MANTICORESEARCH_SEMAFOR = 0;
  * @arg {Function} options.handleTitle - функция обработки заголовка поиска
  * @arg {String} options.titleSuggest - заголовок подсказки
  * @arg {String} options.titleNotFound - заголовок подсказки
- * @arg {Number} options.limit - лимит на кол-во выдачи
- * @arg {Number} options.suggests - лимит на совпадения
- * @arg {Number} options.distance - дистанция поиска совпадений
  * @arg {Number} options.z_index - css
  */
 function manticore_init(options) {
@@ -32,9 +29,6 @@ function manticore_init(options) {
     if (options.defaultWidth == undefined) options.defaultWidth = true;
     if (options.titleSuggest == undefined) options.titleSuggest = 'Возможно, Вы ищите это?';
     if (options.titleNotFound == undefined) options.titleNotFound = 'Ничего не найдено';
-    if (options.limit == undefined) options.limit = 1000;
-    if (options.suggests == undefined) options.suggests = 100;
-    if (options.distance == undefined) options.distance = 10;
     if (options.z_index == undefined) options.z_index = 1;
 
     let inp = document.getElementById(options.inputId);
@@ -92,7 +86,7 @@ function manticore_init(options) {
             __MANTICORESEARCH_SEMAFOR = 0;
             let kw = this.value;
             if (kw) {
-                fetch(`${options.url}?kw=${kw}&index=${options.index}&limit=${options.limit}&distance=${options.distance}&suggests=${options.suggests}`)
+                fetch(`${options.url}?kw=${kw}&index=${options.index}`)
                     .then(res => {
                         return res.json()
                     })
