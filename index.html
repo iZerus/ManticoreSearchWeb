@@ -27,32 +27,31 @@
 
     <script>
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const index = urlParams.get('index');
-
-        if (!index) {
-            alert('Укажите GET параметр index=имя_индекса');
-        } else
-            manticore_init({
-                url:  window.location.pathname+'search.php',
-                index: index,
-                inputId: 'search',
-                titleSuggest: 'Может быть это?',
-                titleNotFound: 'Ничего не нашлось...',
-                defaultWidth: true,
-                timeout: 100,
-                limit: 1000,
-                suggests: 100,
-                distance: 10,
-                z_index: 100,
-                handleElement: (element, item, keyword) => {
-                    let text = manticore_highlight(item.name, keyword, 'highlight');
-                    element.innerHTML = `<a href='/product/${item.url}'>${text}</a>`;
-                },
-                handleTitle: (element, title) => {
-                    element.innerHTML = `> ${title} <`;
-                }
-            });
+		manticore_init({
+			url:  'https://mcsearch.sanctum.beget.tech/ManticoreSearch/search.php',
+			inputId: 'search',
+			titleNotFound: 'Ничего не нашлось...',
+			defaultWidth: true,
+			timeout: 100,
+			z_index: 100,
+			indexes: [
+				{
+					index: 'master59ruCategory',
+					title: 'Категории',
+				},
+				{
+					index: 'master59ruProduct',
+					title: 'Товары',
+				}
+			],
+			handleElement: (element, item, keyword, index) => {
+				let text = manticore_highlight(item.name, keyword, 'highlight');
+				element.innerHTML = `<a href='/product/${item.url}'>${text}</a>`;
+			},
+			handleTitle: (element, title, index) => {
+				element.innerHTML = `> ${title} <`;
+			}
+		});
 
     </script>
 </body>
