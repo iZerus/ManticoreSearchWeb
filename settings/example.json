@@ -1,0 +1,5 @@
+{
+    "limit": 1000,
+    "suggests": 100,
+    "distance": 10
+}
