@@ -38,7 +38,7 @@ function manticore_init(options) {
     block.style.display = 'none';
     block.style.zIndex = options.z_index;
     block.className = '__js-mtcr-search';
-    document.body.appendChild(block);
+    inp.parentElement.appendChild(block);
 
 	let px = 'px';
     block.style.top = (inp.offsetTop + inp.offsetHeight) + px;
