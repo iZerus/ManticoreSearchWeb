@@ -45,13 +45,29 @@ function matchQuery($kw) {
 
 
 function getMatch($kw) {
+    matchQuery('^='.$kw.'');
     matchQuery('^'.$kw.'');
+    matchQuery('^='.$kw.'*');
+    matchQuery('^'.$kw.'*');
+    matchQuery('='.$kw.'');
     matchQuery(''.$kw.'');
+    matchQuery('*='.$kw.'*');
     matchQuery('*'.$kw.'*');
 
     // Делим на слова
     $words = preg_split('/\s+/', $kw);
     if (count($words) > 1) {
+
+		// Ставим вначале =
+        $query = '';
+        foreach ($words as $word)
+            if (mb_strlen($word) > 2) $query .= '*='.$word.'*'.' ';
+            else if (mb_strlen($word) == 2) $query .= '='.$word.'*'.' ';
+
+        $query = substr($query, 0, -1);
+        matchQuery($query);
+
+		// Тоже самое, но без =
         $query = '';
         foreach ($words as $word)
             if (mb_strlen($word) > 2) $query .= '*'.$word.'*'.' ';
