@@ -45,13 +45,13 @@ function matchQuery($kw) {
 
 
 function getMatch($kw) {
-    matchQuery('^='.$kw.'');
+    matchQuery('=^'.$kw.'');
     matchQuery('^'.$kw.'');
-    matchQuery('^='.$kw.'*');
+    matchQuery('=^'.$kw.'*');
     matchQuery('^'.$kw.'*');
     matchQuery('='.$kw.'');
     matchQuery(''.$kw.'');
-    matchQuery('*='.$kw.'*');
+    matchQuery('=*'.$kw.'*');
     matchQuery('*'.$kw.'*');
 
     // Делим на слова
