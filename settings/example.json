@@ -1,5 +1,6 @@
 {
     "limit": 1000,
     "suggests": 100,
-    "distance": 10
+    "distance": 10,
+    "words_limit": 5
 }

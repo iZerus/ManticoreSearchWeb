@@ -21,10 +21,12 @@ if (file_exists("settings/$index_table.json")) {
     $_limit = isset($settings['limit']) ? $settings['limit'] : 1000;
     $_suggests = isset($settings['suggests']) ? $settings['suggests'] : 100;
     $_distance = isset($settings['distance']) ? $settings['distance'] : 10;
+    $_words_limit = isset($settings['words_limit']) ? $settings['words_limit'] : 5;
 } else {
     $_limit = 1000;
     $_suggests = 100;
     $_distance = 10;
+    $_words_limit = 5;
 }
 
 
@@ -109,9 +111,10 @@ function getSuggests($kw, $max_distance, $limit) {
     return $res;
 }
 
-function getSequences($arr) {
+function getSequences($arr, $words_limit) {
     $result = array();
     $total = count($arr);
+    $total = $total > $words_limit ? $words_limit : $total;
     while(true) {
         $row = array();
         foreach ($arr as $key => $value) $row[] = current($value);
@@ -141,7 +144,7 @@ if (count($words) > 1) {
 
     
     
-    $sequences = getSequences($word_table);
+    $sequences = getSequences($word_table, $_words_limit);
     // print_r($word_table);  //TODO REMOVE
     // print_r($sequences);  //TODO REMOVE
     // exit;
