@@ -7,3 +7,4 @@ settings/*
 !settings/.gitkeep
 !settings/.htaccess
 !settings/example.json
+.vscode/
