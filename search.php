@@ -47,6 +47,8 @@ function matchQuery($kw) {
 
 
 function getMatch($kw) {
+    matchQuery('=^"'.$kw.'"');
+    matchQuery('="'.$kw.'"');
     matchQuery('=^'.$kw.'');
     matchQuery('^'.$kw.'');
     matchQuery('=^'.$kw.'*');
@@ -145,9 +147,6 @@ if (count($words) > 1) {
     
     
     $sequences = getSequences($word_table, $_words_limit);
-    // print_r($word_table);  //TODO REMOVE
-    // print_r($sequences);  //TODO REMOVE
-    // exit;
 
     foreach ($sequences as $seq)
         getMatch($seq);
