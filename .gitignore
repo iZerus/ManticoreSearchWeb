@@ -8,3 +8,4 @@ settings/*
 !settings/.htaccess
 !settings/example.json
 .vscode/
+logs/*

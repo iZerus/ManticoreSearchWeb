@@ -6,6 +6,9 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+const DEBUG_LOG = false;
+$log = new stdClass();
+
 
 // Если вместо 127.0.0.1 написать localhost, то под линуксом PDO может приконнектиться к MySQL
 $pdo = new PDO('mysql:host=127.0.0.1;port=9306');
@@ -36,27 +39,31 @@ if (!preg_match("/^([a-zA-Z0-9]+)$/", $index_table))
 
 function _array_push(&$array, &$items) { foreach ($items as &$value) $array[] = $value; }
 
-function matchQuery($kw) {
+function matchQuery($kw, &$log) {
     global $pdo, $res, $lim, $index_table;
     $stmt = $pdo->prepare("SELECT * FROM ".$index_table." WHERE MATCH(:kw) LIMIT 1000");
     $stmt->bindParam(":kw", $kw, PDO::PARAM_STR);
     $stmt->execute();
     $results = $stmt->fetchAll();
+    if (DEBUG_LOG) array_push($log, [
+        "keyword" => "[$kw]",
+        "result" => count($results)
+    ]);
     _array_push($res['match'], $results);
 }
 
 
-function getMatch($kw) {
-    matchQuery('=^"'.$kw.'"');
-    matchQuery('="'.$kw.'"');
-    matchQuery('=^'.$kw.'');
-    matchQuery('^'.$kw.'');
-    matchQuery('=^'.$kw.'*');
-    matchQuery('^'.$kw.'*');
-    matchQuery('='.$kw.'');
-    matchQuery(''.$kw.'');
-    matchQuery('=*'.$kw.'*');
-    matchQuery('*'.$kw.'*');
+function getMatch($kw, &$log) {
+    matchQuery('=^"'.$kw.'"', $log);
+    matchQuery('="'.$kw.'"', $log);
+    matchQuery('=^'.$kw.'', $log);
+    matchQuery('^'.$kw.'', $log);
+    matchQuery('=^'.$kw.'*', $log);
+    matchQuery('^'.$kw.'*', $log);
+    matchQuery('='.$kw.'', $log);
+    matchQuery(''.$kw.'', $log);
+    matchQuery('=*'.$kw.'*', $log);
+    matchQuery('*'.$kw.'*', $log);
 
     // Делим на слова
     $words = preg_split('/\s+/', $kw);
@@ -69,7 +76,7 @@ function getMatch($kw) {
             else if (mb_strlen($word) == 2) $query .= '='.$word.'*'.' ';
 
         $query = substr($query, 0, -1);
-        matchQuery($query);
+        matchQuery($query, $log);
 
 		// Тоже самое, но без =
         $query = '';
@@ -78,7 +85,7 @@ function getMatch($kw) {
             else if (mb_strlen($word) == 2) $query .= $word.'*'.' ';
 
         $query = substr($query, 0, -1);
-        matchQuery($query);
+        matchQuery($query, $log);
     }
 }
 
@@ -133,8 +140,14 @@ function getSequences($arr, $words_limit) {
     return $result;
 }
 
+if (DEBUG_LOG) {
+    $log->name = $kw;
+    $log->absolute = [];
+    $log->suggests = [];
+}
+
 // Ищем точное совпадение
-getMatch($kw);
+getMatch($kw, $log->absolute);
 
 // Делим на слова
 $words = preg_split('/\s+/', $kw);
@@ -145,15 +158,19 @@ if (count($words) > 1) {
         $word_table[] = getSuggests($word, $_distance, $_suggests); 
 
     
-    
     $sequences = getSequences($word_table, $_words_limit);
 
+    if (DEBUG_LOG) {
+        $log->word_table = $word_table;
+        $log->sequences = $sequences;
+    }
+
     foreach ($sequences as $seq)
-        getMatch($seq);
+        getMatch($seq, $log->suggests);
 }
 else // Ищем по прдложенным, если слово одно
     foreach (getSuggests($words[0], $_distance, $_suggests) as $sgst)
-        getMatch($sgst);
+        getMatch($sgst, $log->suggests);
 
 $response = [ 'keywords' => [], 'match' => [], 'suggest' => [] ];
 
@@ -167,5 +184,9 @@ foreach ($res['match'] as $value) {
 }
 
 $response['match'] = array_slice($response['match'], 0, $_limit);
+
+if (DEBUG_LOG) {
+    file_put_contents("logs/mcsearch.log", print_r($log, true), FILE_APPEND);
+}
 
 echo json_encode($response, true);
