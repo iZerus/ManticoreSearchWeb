@@ -186,7 +186,7 @@ foreach ($res['match'] as $value) {
 $response['match'] = array_slice($response['match'], 0, $_limit);
 
 if (DEBUG_LOG) {
-    file_put_contents("logs/mcsearch.log", print_r($log, true), FILE_APPEND);
+    file_put_contents("logs/mcsearch.log", json_encode($log, JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND);
 }
 
 echo json_encode($response, true);
