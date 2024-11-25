@@ -41,6 +41,7 @@ function _array_push(&$array, &$items) { foreach ($items as &$value) $array[] = 
 
 function matchQuery($kw, &$log) {
     global $pdo, $res, $lim, $index_table;
+    $kw = str_replace('/', '_', $kw);
     $stmt = $pdo->prepare("SELECT * FROM ".$index_table." WHERE MATCH(:kw) LIMIT 1000");
     $stmt->bindParam(":kw", $kw, PDO::PARAM_STR);
     $stmt->execute();
