@@ -55,10 +55,10 @@ function matchQuery($kw, &$log) {
 
 
 function getMatch($kw, &$log) {
+    matchQuery('^' . $kw . '', $log);
     matchQuery('=^"'.$kw.'"', $log);
     matchQuery('="'.$kw.'"', $log);
     matchQuery('=^'.$kw.'', $log);
-    matchQuery('^'.$kw.'', $log);
     matchQuery('=^'.$kw.'*', $log);
     matchQuery('^'.$kw.'*', $log);
     matchQuery('='.$kw.'', $log);
