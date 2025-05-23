@@ -141,6 +141,50 @@ function getSequences($arr, $words_limit) {
     return $result;
 }
 
+function getWordCombinations($str) {
+    $words = preg_split('/\s+/', trim($str));
+    $result = [];
+    $n = count($words);
+
+    // Генерируем все перестановки для длин от 1 до $n
+    for ($k = 1; $k <= $n; $k++) {
+        generatePermutations($words, $k, $result);
+    }
+
+    return array_unique($result); // Убираем дубликаты
+}
+
+// Генерирует все перестановки из $k слов
+function generatePermutations($words, $k, &$result, $used = [], $current = []) {
+    if (count($current) === $k) {
+        $result[] = implode(' ', $current);
+        return;
+    }
+
+    for ($i = 0; $i < count($words); $i++) {
+        if (!in_array($i, $used)) {
+            $used[] = $i;
+            $current[] = $words[$i];
+            generatePermutations($words, $k, $result, $used, $current);
+            array_pop($current);
+            array_pop($used);
+        }
+    }
+}
+
+function shuffle_sequences($sequences)
+{
+    $result = $sequences;
+    foreach ($sequences as $sequence) {
+        $combinations = getWordCombinations($sequence);
+        array_push($result, ...$combinations);
+    }
+    usort($result, function ($a, $b) {
+        return mb_strlen($a) < mb_strlen($b);
+    });
+    return array_unique($result);
+}
+
 if (DEBUG_LOG) {
     $log->name = $kw;
     $log->absolute = [];
@@ -160,6 +204,9 @@ if (count($words) > 1) {
 
     
     $sequences = getSequences($word_table, $_words_limit);
+    if (!empty($sequences)) {
+        $sequences = shuffle_sequences((array)reset($sequences));
+    }
 
     if (DEBUG_LOG) {
         $log->word_table = $word_table;
