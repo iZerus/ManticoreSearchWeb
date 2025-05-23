@@ -55,21 +55,23 @@ function matchQuery($kw, &$log) {
 }
 
 
-function getMatch($kw, &$log) {
+function getMatch($kw, &$log, $fullSearch = true) {
     matchQuery('^' . $kw . '', $log);
-    matchQuery('=^"'.$kw.'"', $log);
-    matchQuery('="'.$kw.'"', $log);
-    matchQuery('=^'.$kw.'', $log);
-    matchQuery('=^'.$kw.'*', $log);
-    matchQuery('^'.$kw.'*', $log);
-    matchQuery('='.$kw.'', $log);
-    matchQuery(''.$kw.'', $log);
-    matchQuery('=*'.$kw.'*', $log);
-    matchQuery('*'.$kw.'*', $log);
+    if ($fullSearch) {
+        matchQuery('=^"'.$kw.'"', $log);
+        matchQuery('="'.$kw.'"', $log);
+        matchQuery('=^'.$kw.'', $log);
+        matchQuery('=^'.$kw.'*', $log);
+        matchQuery('^'.$kw.'*', $log);
+        matchQuery('='.$kw.'', $log);
+        matchQuery(''.$kw.'', $log);
+        matchQuery('=*'.$kw.'*', $log);
+        matchQuery('*'.$kw.'*', $log);
+    }
 
     // Делим на слова
     $words = preg_split('/\s+/', $kw);
-    if (count($words) > 1) {
+    if ($fullSearch && count($words) > 1) {
 
 		// Ставим вначале =
         $query = '';
@@ -206,7 +208,8 @@ if (count($words) > 1) {
     
     $sequences = getSequences($word_table, $_words_limit);
     if (!empty($sequences)) {
-        $sequences = shuffle_sequences((array)reset($sequences));
+        $additionalSequences = shuffle_sequences((array)reset($sequences));
+        array_push($sequences, ...$additionalSequences);
     }
 
     if (DEBUG_LOG) {
@@ -215,7 +218,7 @@ if (count($words) > 1) {
     }
 
     foreach ($sequences as $seq)
-        getMatch($seq, $log->suggests);
+        getMatch($seq, $log->suggests, false);
 }
 else // Ищем по прдложенным, если слово одно
     foreach (getSuggests($words[0], $_distance, $_suggests) as $sgst)
